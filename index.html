@@ -318,7 +318,6 @@ body {
     <span class="rl">העסקה</span>
     <div class="seg">
       <button class="sb on" id="et-emp" onclick="setF('employ','emp')">שכיר</button>
-      <button class="sb" id="et-std" onclick="setF('employ','std')">סטודנט</button>
       <button class="sb" id="et-slf" onclick="setF('employ','slf')">עצמאי</button>
     </div>
   </div>
@@ -505,9 +504,7 @@ function daysFromRange(from,to){
 }
 
 function getDayRate(){
-  if(PROF.employ==='std') return MIN_DAY;
   const fromSalary=PROF.salary/30;
-  // lower bound = MIN_DAY, upper bound = MAX_DAY (legal ceiling)
   return Math.min(MAX_DAY, Math.max(MIN_DAY, fromSalary));
 }
 function baseNet(days){
@@ -1222,10 +1219,7 @@ document.addEventListener('DOMContentLoaded',function(){
 function setF(field,val){
   if(field==='employ'){
     PROF.employ=val;
-    ['emp','std','slf'].forEach(x=>document.getElementById('et-'+x).className='sb'+(x===val?' on':''));
-    const sr=document.getElementById('sal-row');
-    sr.style.opacity=val==='std'?'0.35':'1';
-    sr.style.pointerEvents=val==='std'?'none':'auto';
+    ['emp','slf'].forEach(x=>document.getElementById('et-'+x).className='sb'+(x===val?' on':''));
   } else if(field==='tier'){
     PROF.tier=val;
     ['aplus','a','b','c'].forEach(x=>document.getElementById('tr-'+x).className='sb'+(x===val?' on':''));
@@ -1430,10 +1424,9 @@ function render(){
   document.getElementById('h-total').textContent=fmt(baseTotal+autoTotal+manualTotal);
   const dr=getDayRate();
   const fromSal=PROF.salary/30;
-  const isMin=PROF.employ!=='std'&&fromSal<MIN_DAY;
-  const isMax=PROF.employ!=='std'&&fromSal>MAX_DAY;
-  const subTxt=PROF.employ==='std'?`מינ׳ ₪${MIN_DAY}/יום (סטודנט)`:
-    PROF.employ==='slf'?`₪${Math.round(dr)}/יום + 25% עצמאי`:
+  const isMin=fromSal<MIN_DAY;
+  const isMax=fromSal>MAX_DAY;
+  const subTxt=PROF.employ==='slf'?`₪${Math.round(dr)}/יום + 25% עצמאי`:
     isMin?`שכר ÷30 = ₪${Math.round(fromSal)} → מינ׳ מילואים ₪${MIN_DAY}/יום`:
     isMax?`שכר ÷30 = ₪${Math.round(fromSal)} → תקרה ₪${MAX_DAY}/יום`:
     `₪${Math.round(fromSal)}/יום (שכר ÷ 30)`;
@@ -1474,8 +1467,12 @@ function render(){
       <div class="tl-w"><div class="tl-spine"></div>`;
     // base
     const bPaid=isPast||PAID['base_'+year];
-    const bWhen=isPast?'שולם ע"י ביטוח לאומי · '+year:'1 לחודש · חודש אחרי כל שירות';
-    tlh+=tlRow('base_'+year,'תגמול בסיס — ביטוח לאומי',bWhen,true,false,base,null,bPaid);
+    const isEmp=PROF.employ==='emp';
+    const bLabel=isEmp?'תגמול בסיס — דרך המעסיק':'תגמול בסיס — הגשה לביטוח לאומי';
+    const bWhen=isPast
+      ?(isEmp?'שולם דרך המעסיק · '+year:'שולם ע"י ביטוח לאומי · '+year)
+      :(isEmp?'1 לחודש · דרך המעסיק':'1 לחודש · הגשה לביטוח לאומי');
+    tlh+=tlRow('base_'+year,bLabel,bWhen,true,false,base,null,bPaid);
     items.forEach(i=>{
       if(i.locked){tlh+=tlRow(i.key,i.name,i.when,i.auto,true,0,null,false);}
       else{
@@ -1550,10 +1547,7 @@ function tlRow(key,name,when,auto,locked,amt,dead,isPaid){
 
 function syncUI() {
   // employ
-  ['emp','std','slf'].forEach(x => document.getElementById('et-'+x).className = 'sb'+(x===PROF.employ?' on':''));
-  const sr = document.getElementById('sal-row');
-  sr.style.opacity = PROF.employ==='std' ? '0.35' : '1';
-  sr.style.pointerEvents = PROF.employ==='std' ? 'none' : 'auto';
+  ['emp','slf'].forEach(x => document.getElementById('et-'+x).className = 'sb'+(x===PROF.employ?' on':''));
   document.getElementById('sal-in').value = PROF.salary;
   // tier
   ['aplus','a','b','c'].forEach(x => document.getElementById('tr-'+x).className = 'sb'+(x===PROF.tier?' on':''));
@@ -1589,6 +1583,7 @@ function loadState() {
   const p = new URLSearchParams(location.search);
   if (p.has('emp')) {
     PROF.employ   = p.get('emp');
+    if(PROF.employ==='std') PROF.employ='emp';
     PROF.salary   = parseInt(p.get('sal')) || 12000;
     PROF.tier     = p.get('tier') || 'a';
     FAM.kids14    = parseInt(p.get('k14')) || 0;
