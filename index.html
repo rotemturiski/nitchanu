@@ -664,17 +664,37 @@ function getManualItems(){
         when:isPast?'בדוק אם מומש — עדיין תקף?':'SMS מהצבא · מרכז מילואים 360',
         amt:vAmt,dead,year,expired:isExpired(dead),missed:isPast&&!CHECKED['voucher_'+year]});
     }
-    if(totalDays>=50){
-      const dead='31.12.'+year;
-      all.push({key:'psych_'+year,name:'החזר פסיכולוג',
-        when:isPast?'קרן הסיוע — בדוק אם ניצלת':'קרן הסיוע · שלם קבלה → הגש',
-        amt:1800,dead,year,expired:isExpired(dead),missed:isPast&&!CHECKED['psych_'+year]});
+    if(totalDays>=50&&['aplus','a','b'].includes(tr)){
+      const totalKids=(FAM.kids14>0?FAM.kids14:0)+(FAM.kids16>0?FAM.kids16:0);
+      const kidsGroup=totalKids>=4?'4+':totalKids>=1?'1-3':'0';
+      const psychTable={
+        'aplus':{'4+':6000,'1-3':5280,'0':3600},
+        'a':{'4+':5040,'1-3':4320,'0':3120},
+        'b':{'4+':4080,'1-3':3360,'0':2400}
+      };
+      const psychAmt=psychTable[tr][kidsGroup];
+      const psychSessions={'aplus':{'4+':25,'1-3':22,'0':15},'a':{'4+':21,'1-3':18,'0':13},'b':{'4+':17,'1-3':14,'0':10}};
+      const sessions=psychSessions[tr][kidsGroup];
+      const dead='31.12.'+(year+1);
+      all.push({key:'psych_'+year,name:'החזר טיפולים רגשיים',
+        when:isPast?'קרן הסיוע — בדוק אם ניצלת':'קרן הסיוע · קבלות מטיפול',
+        amt:psychAmt,dead,year,expired:isExpired(dead),missed:isPast&&!CHECKED['psych_'+year],
+        note:'עד '+sessions+' מפגשים · ₪240/מפגש · כולל זוגי/משפחתי'});
     }
     {
       all.push({key:'road6_'+year,name:'החזר כביש 6',
         when:isPast?'קרן הסיוע — בדוק אם ניצלת':'קרן הסיוע · קבלות + רכב',
         amt:Math.max(300,Math.round((totalDays/30)*300)),dead:null,year,
         missed:isPast&&!CHECKED['road6_'+year]});
+    }
+    // תיקוני בית — חד פעמי, בעל משפחה, 8+ ימים
+    const hasFam=FAM.partner||FAM.kids14>0||FAM.kids16>0;
+    if(hasFam&&totalDays>=8&&year===CUR_YEAR){
+      const fixAmt=['aplus','a'].includes(tr)?1500:500;
+      all.push({key:'homefix_'+year,name:'החזר תיקוני בית',
+        when:'קרן הסיוע · "מענה שוטף לכלכלת הבית" + קבלות',
+        amt:fixAmt,dead:null,year,
+        note:'חד פעמי · לוחמים ₪1,500 / אחרים ₪500'});
     }
     if(FAM.student&&year>=FAM.student_since&&totalDays>=50){
       const dead='30.9.'+year;
