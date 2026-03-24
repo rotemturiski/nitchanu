@@ -504,7 +504,7 @@ let PAID={}, CHECKED={};
 let POLICY = null;
 const POLICY_FALLBACK={
   2026:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3500,c:0},fT:10,expT:40,expD:{aplus:155,a:130,b:100,c:70},specT:61,specD:{aplus:133,a:113,b:86,c:60},kitT:45,kit:{aplus:1250,a:1250,b:1000,c:0},vT:45,vAmt:{aplus:2630,a:2200,b:1500,c:0},vAmtKids:{aplus:4500,a:3500,b:2200,c:0},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
-  2025:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3000,c:0},fT:10,expT:40,expD:{aplus:133,a:110,b:86,c:60},specT:61,specD:{aplus:133,a:113,b:86,c:60},kitT:45,kit:{aplus:1250,a:1250,b:1000,c:0},vT:60,vAmt:{aplus:2000,a:1700,b:1200,c:0},vAmtKids:{aplus:4000,a:3200,b:2000,c:0},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
+  2025:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3000,c:0},fT:10,expT:40,expS:30,expD:{aplus:46.6,a:46.6,b:31,c:26.6},specT:61,specD:{aplus:133,a:133,b:60,c:40},kitT:45,kit:{aplus:2500,a:2500,b:1250,c:1250},vT:60,vAmt:{aplus:3500,a:3500,b:1050,c:1050},vAmtKids:{aplus:4500,a:4500,b:1350,c:1350},famT:40,famS:30,famD:{aplus:83.3,a:83.3,b:60,c:50},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
   2024:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
   2023:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
 };
@@ -562,31 +562,35 @@ function calcYear(yr,totalDays,tr,p){
   if(p.fMax[tr]>0&&totalDays>=p.fT){
     const a=Math.min(Math.min(totalDays,30)*p.fD1[tr]+Math.max(0,totalDays-30)*p.fD31[tr],p.fMax[tr]);
     if(a>0) items.push({key:'fayter_'+yr,name:'ארנק פייטר',
-      when:isPast?'נטען במהלך השירות':'שוטף · נטען לארנק דיגיטלי',auto:true,amt:a});
+      when:isPast?'נטען במהלך השירות':'שוטף · נטען לארנק דיגיטלי',auto:true,amt:a,isPaid:isPast});
   }
   // expenses
   if(totalDays>=p.expT){
-    const a=Math.max(0,totalDays-p.expT)*p.expD[tr];
-    if(a>0) items.push({key:'exp_'+yr,name:'מענק הוצאות אישיות (יום '+p.expT+'+)',
-      when:isPast?'שולם אוטומטית · '+yr:'אוטומטי · 60–90 יום אחרי סיום '+yr,auto:true,amt:a});
+    const expStart=p.expS||p.expT;
+    const a=Math.max(0,totalDays-expStart)*p.expD[tr];
+    const expPaid=now>=new Date(yr+1,2,1);
+    if(a>0) items.push({key:'exp_'+yr,name:'מענק הוצאות אישיות (יום '+expStart+'+)',
+      when:expPaid?'שולם אוטומטית · '+yr:'אוטומטי · 60–90 יום אחרי סיום '+yr,auto:true,amt:a,isPaid:expPaid});
   }
   // family daily (kids<14)
   if(FAM.kids14>0&&yr>=FAM.kids14_since&&totalDays>=p.famT){
-    const a=Math.max(0,totalDays-p.famT)*p.famD[tr];
-    if(a>0) items.push({key:'fam_'+yr,name:'מענק משפחה מוגדל (יום '+p.famT+'+)',
-      when:isPast?'שולם ע"י מופת · '+yr:'אוטומטי · ע"י מופת',auto:true,amt:a});
+    const famStart=p.famS||p.famT;
+    const a=Math.max(0,totalDays-famStart)*p.famD[tr];
+    if(a>0) items.push({key:'fam_'+yr,name:'מענק משפחה מוגדל (יום '+famStart+'+)',
+      when:isPast?'שולם ע"י מופת · '+yr:'אוטומטי · ע"י מופת',auto:true,amt:a,isPaid:isPast});
   }
   // kit bayit
   if(totalDays>=p.kitT&&p.kit[tr]>0){
     const kitPaid=now>=new Date(yr,8,1); // September 1
     items.push({key:'kit_'+yr,name:'מענק כלכלת בית (יום '+p.kitT+'+)',
-      when:kitPaid?'שולם ספטמבר '+yr:'ספטמבר '+yr+' · אוטומטי',auto:true,amt:p.kit[tr]});
+      when:kitPaid?'שולם ספטמבר '+yr:'ספטמבר '+yr+' · אוטומטי',auto:true,amt:p.kit[tr],isPaid:kitPaid});
   }
   // special
   if(totalDays>=p.specT){
     const a=Math.max(0,totalDays-p.specT)*p.specD[tr];
+    const specPaid=now>=new Date(yr+1,4,1);
     if(a>0) items.push({key:'spec_'+yr,name:'תגמול מיוחד (יום '+p.specT+'+)',
-      when:isPast?'שולם אוטומטית · '+yr:'אוטומטי · אחרי סיום שירות '+yr,auto:true,amt:a});
+      when:specPaid?'שולם אוטומטית · '+yr:'1.5.'+(yr+1)+' · אוטומטי',auto:true,amt:a,isPaid:specPaid});
   }
   // yom haatzmaut
   let idA=0;
@@ -596,7 +600,7 @@ function calcYear(yr,totalDays,tr,p){
     const idDate=new Date(yr+1,4,1); // May 1 of next year
     const idPaid=now>=idDate;
     items.push({key:'id_'+yr,name:'מענק יום העצמאות',
-      when:idPaid?'שולם מאי '+(yr+1):'מאי '+(yr+1)+' · אוטומטי',auto:true,amt:idA});
+      when:idPaid?'שולם מאי '+(yr+1):'מאי '+(yr+1)+' · אוטומטי',auto:true,amt:idA,isPaid:idPaid});
   }
 
   // MANUAL items
@@ -1581,7 +1585,7 @@ function render(){
     items.forEach(i=>{
       if(i.locked){tlh+=tlRow(i.key,i.name,i.when,i.auto,true,0,null,false);}
       else{
-        const ip=isPast||PAID[i.key];
+        const ip=i.isPaid||PAID[i.key];
         tlh+=tlRow(i.key,i.name,i.when,i.auto,false,i.amt,i.dead||null,ip);
       }
     });
