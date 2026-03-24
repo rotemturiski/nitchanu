@@ -890,15 +890,45 @@ function parseShmpFormat(textItems,fullText){
     const dm2=fullText.match(/החל[^\d]*(\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{4})/);
     if(dm2) startDate=parseDateDMY(dm2[1].replace(/\s/g,''));
   }
+  // Sanity: fix OCR year misreads (e.g. 2036→2026)
+  if(startDate){
+    const sy=startDate.getFullYear();
+    if(sy>CUR_YEAR+1&&sy<=CUR_YEAR+20){
+      startDate=new Date(CUR_YEAR,startDate.getMonth(),startDate.getDate());
+    } else if(sy<2020||sy>CUR_YEAR+1){
+      startDate=null;
+    }
+    if(startDate&&startDate>new Date()) startDate=null;
+  }
   // "XX ימים על פי צו חירום" or "XX ימים" or "XX יום"
   const dd=fullText.match(/(\d+)\s*ימי[ם]?/)||fullText.match(/(\d+)\s*יום/);
   if(dd) totalDays=parseInt(dd[1]);
   if(!startDate&&!totalDays) return null;
+  const now=new Date();
   const year=startDate?startDate.getFullYear():CUR_YEAR;
+  // End date: for open orders use today if still active
+  let endDate=null;
+  if(startDate&&totalDays){
+    const calcEnd=new Date(startDate);
+    calcEnd.setDate(calcEnd.getDate()+totalDays-1);
+    endDate=calcEnd<=now?calcEnd:now;
+  } else if(startDate){
+    endDate=now;
+  }
+  // allPeriods for monthly breakdown
+  const allPeriods=[];
+  if(startDate&&endDate){
+    allPeriods.push({
+      startDate,endDate,
+      days:totalDays||Math.floor((endDate-startDate)/86400000)+1,
+      serviceType:'tzav8'
+    });
+  }
   return {
     type:'shmp',
     periods:[{year,totalDays:totalDays||0,days8:totalDays||0,daysReg:0,
-      firstDate:startDate,lastDate:null}],
+      firstDate:startDate,lastDate:endDate}],
+    allPeriods,
     confidence:startDate&&totalDays?0.9:0.5,
     raw:fullText
   };
