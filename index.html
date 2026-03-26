@@ -247,10 +247,14 @@ body {
 .pdf-yr-type { font-size: 11px; font-weight: 700; color: #166534; padding: 2px 8px; border-radius: 999px; background: #dcfce7; }
 .pdf-warn { color: #b45309; font-size: 12.5px; font-weight: 600; margin-top: 8px; text-align: center; background: #fef3c7; padding: 6px; border-radius: 8px; }
 
-/* DISCLAIMER */
+/* DISCLAIMER & BANNERS */
 .disclaimer { background: linear-gradient(to right, #fffbeb, #fef3c7); border: 1px solid #fde68a; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px; font-size: 13px; font-weight: 500; color: #92400e; line-height: 1.6; text-align: center; box-shadow: 0 4px 15px rgba(217,119,6,0.05); }
 .disclaimer a { color: #b45309; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; transition: color 0.15s; }
 .disclaimer a:hover { color: #78350f; }
+
+.op-banner { background: linear-gradient(to right, #eff6ff, #dbeafe); border: 1px solid #bfdbfe; border-radius: 16px; padding: 16px 20px; margin-bottom: 16px; font-size: 13px; font-weight: 500; color: #1e3a8a; line-height: 1.6; text-align: center; box-shadow: 0 4px 15px rgba(37,99,235,0.05); }
+.op-banner a { color: #1d4ed8; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; transition: color 0.15s; }
+.op-banner a:hover { color: #1e3a8a; }
 
 /* SHARE BUTTONS */
 .share-row { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
@@ -475,14 +479,54 @@ body {
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
     שתף לינק
   </button>
-  <button class="share-btn-img" onclick="generateShareCard()">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-    שתף כתמונה
+  <button class="share-btn-img" onclick="openSim()" style="background:#10b981; color:#fff; border-color:#10b981; box-shadow: 0 4px 15px rgba(16,185,129,0.2);">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    סימולטור שכר החודש
   </button>
+</div>
+
+<!-- SIMULATOR -->
+<div id="sim-wrap" style="display:none; background:#fff; border-radius:16px; border:2px solid #10b981; padding:16px 20px; margin-bottom:16px; box-shadow:0 4px 20px rgba(16,185,129,0.1)">
+  <div style="font-size:15px;font-weight:800;color:#112a1c;margin-bottom:12px;display:flex;justify-content:space-between">
+    <span><span class="sec-icon">💸</span>סימולטור משכורת חודשית</span>
+    <button onclick="document.getElementById('sim-wrap').style.display='none'" style="background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:#94a3b8">&times;</button>
+  </div>
+  
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <label style="font-size:13px;font-weight:600;color:#64816e">שכר ברוטו רגיל</label>
+      <div style="display:flex;align-items:center;gap:4px">
+        <span style="font-size:13px;color:#789982">₪</span>
+        <input type="number" id="sim-sal" style="width:90px;padding:6px;border-radius:8px;border:1px solid #e2e8e4;font-size:14px;font-weight:700" oninput="calcSim()"/>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <label style="font-size:13px;font-weight:600;color:#64816e;line-height:1.2">ימי מילואים החודש<br><small style="font-weight:400;font-size:11px">כולל סופ"ש שעשית</small></label>
+      <input type="number" id="sim-mil" value="0" min="0" max="31" style="width:60px;padding:6px;text-align:center;border-radius:8px;border:1px solid #e2e8e4;font-size:14px;font-weight:700" oninput="calcSim()"/>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <label style="font-size:13px;font-weight:600;color:#64816e;line-height:1.2">ימי עבודה בפועל החודש<br><small style="font-weight:400;font-size:11px">ימים שהגעת למשרד</small></label>
+      <input type="number" id="sim-work" value="0" min="0" max="31" style="width:60px;padding:6px;text-align:center;border-radius:8px;border:1px solid #e2e8e4;font-size:14px;font-weight:700" oninput="calcSim()"/>
+    </div>
+    
+    <div style="margin-top:8px;padding-top:12px;border-top:1px dashed #e2e8e4;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:12px;color:#64816e;line-height:1.5">
+        הערכת ביטוח לאומי: <strong id="sim-bl" style="color:#10b981">₪0</strong><br>
+        הערכת שכר מעסיק: <strong id="sim-emp" style="color:#112a1c">₪0</strong>
+      </div>
+      <div style="text-align:left">
+        <div style="font-size:11.5px;color:#789982;font-weight:600">ברוטו משוער</div>
+        <div id="sim-total" style="font-size:24px;font-weight:900;color:#10b981;line-height:1">₪0</div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="disclaimer">
   המחשבון מספק הערכה בלבד ועלול להכיל אי-דיוקים. הנתונים מעודכנים ליום 22.3.2026.
   מומלץ לבדוק את המתווה המלא באתר המילואים: <a href="https://www.miluim.idf.il/articles-list/%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-2026/" target="_blank">מדיניות 2026 — miluim.idf.il</a>
+</div>
+<div class="op-banner">
+  📣 שים לב: מבצע "שאגת הארי" עשוי לזכות במענקים מיוחדים.<br>מומלץ להתעדכן במתווה הספציפי: <a href="https://www.miluim.idf.il/articles-list/%D7%9E%D7%91%D7%A6%D7%A2-%D7%A9%D7%90%D7%92%D7%AA-%D7%94%D7%90%D7%A8%D7%99/" target="_blank">מתווה מבצע שאגת הארי</a>
 </div>
 <div class="foot"><strong style="color:#10b981">נטחנו</strong> · מחשבון זכויות מילואים · <a href="https://www.miluim.idf.il/articles-list/%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-2026/" target="_blank" style="color:#64816e">miluim.idf.il</a></div>
 </div>
@@ -504,11 +548,23 @@ let PAID={}, CHECKED={};
 
 let POLICY = null;
 const POLICY_FALLBACK={
-  2026:{fD1:{aplus:45,a:40,b:30,c:0},fD31:{aplus:120,a:100,b:80,c:0},fD46:{aplus:70,a:60,b:45,c:0},fMax:{aplus:5000,a:4250,b:3250,c:0},fT:10,expT:40,expD:{aplus:46,a:39,b:31,c:31},specT:61,specD:{aplus:133,a:113,b:86,c:60},kitT:45,kit:{aplus:1250,a:1065,b:815,c:0},vT:45,vAmt:{aplus:3500,a:2950,b:2300,c:1050},vAmtKids:{aplus:4500,a:3900,b:3000,c:1350},famT:40,famD:{aplus:83,a:71,b:60,c:60},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
-  2025:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3000,c:0},fT:10,expT:40,expS:30,expD:{aplus:46.6,a:46.6,b:31,c:26.6},specT:61,specD:{aplus:133,a:133,b:60,c:40},kitT:45,kit:{aplus:2500,a:2500,b:1250,c:1250},vT:60,vAmt:{aplus:3500,a:3500,b:1050,c:1050},vAmtKids:{aplus:4500,a:4500,b:1350,c:1350},famT:40,famS:30,famD:{aplus:83.3,a:83.3,b:60,c:50},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
+  2026:{fD1:{aplus:45,a:40,b:30,c:0},fD31:{aplus:120,a:100,b:80,c:0},fD46:{aplus:70,a:60,b:45,c:0},fMax:{aplus:5000,a:4250,b:3250,c:0},fT:10,expT:40,expD:{aplus:46,a:39,b:31,c:31},specT:61,specD:{aplus:133,a:113,b:95,c:95},kitT:45,kit:{aplus:1250,a:1065,b:815,c:0},vT:45,vBase:{aplus:2500,a:2125,b:1600,c:780},vDay:{aplus:57,a:48,b:37,c:18},vMax:{aplus:3350,a:2850,b:2150,c:1050},vBaseKids:{aplus:3000,a:2550,b:1950,c:1020},vDayKids:{aplus:67,a:57,b:43,c:22},vMaxKids:{aplus:4000,a:3400,b:2600,c:1350},famT:40,famD:{aplus:83,a:71,b:60,c:60},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
+  2025:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3000,c:0},fT:10,expT:40,expS:30,expD:{aplus:46.6,a:46.6,b:31,c:26.6},specT:61,specD:{aplus:133,a:133,b:60,c:40},kitT:45,kit:{aplus:2500,a:2500,b:1250,c:1250},vT:60,vAmt:{aplus:3000,a:3000,b:2000,c:1000},vAmtKids:{aplus:4500,a:4500,b:3500,c:2500},famT:40,famS:30,famD:{aplus:83.3,a:83.3,b:60,c:50},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
   2024:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
   2023:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
 };
+
+function getVoucherAmt(p, tr, hasKids, totalDays) {
+  if (p.vBase) {
+    const base = hasKids ? p.vBaseKids[tr] : p.vBase[tr];
+    if (!base) return 0;
+    const dayRate = hasKids ? p.vDayKids[tr] : p.vDay[tr];
+    const maxAmt = hasKids ? p.vMaxKids[tr] : p.vMax[tr];
+    const extraDays = Math.max(0, Math.min(totalDays - p.vT, 15));
+    return Math.min(base + extraDays * dayRate, maxAmt);
+  }
+  return hasKids ? (p.vAmtKids ? p.vAmtKids[tr] : 0) : (p.vAmt ? p.vAmt[tr] : 0);
+}
 
 function paidDays(d){const f=Math.floor(d/7)*7,r=d%7;return f+[0,1.4,2.8,4.2,5.6,7,7][r];}
 function fmt(n){return '₪'+Math.round(n).toLocaleString('he-IL');}
@@ -608,7 +664,7 @@ function calcYear(yr,totalDays,tr,p){
   // MANUAL items
   // voucher
   const hasKids=FAM.kids14>0||FAM.kids16>0;
-  const vAmt=hasKids?p.vAmtKids[tr]:p.vAmt[tr];
+  const vAmt=getVoucherAmt(p, tr, hasKids, totalDays);
   if(totalDays>=p.vT&&vAmt>0){
     items.push({key:'voucher_'+yr,name:'שובר נופש'+(hasKids?' (עם ילדים)':''),
       when:isPast?'בדוק אם מומש':'SMS מהצבא · מרכז מילואים 360',
@@ -662,7 +718,7 @@ function getManualItems(){
     const p=POLICY[year]||POLICY[CUR_YEAR];
     const tr=PROF.tier;
     const hasKids=(FAM.kids14>0&&year>=FAM.kids14_since)||(FAM.kids16>0&&year>=FAM.kids16_since);
-    const vAmt=hasKids?p.vAmtKids[tr]:p.vAmt[tr];
+    const vAmt=getVoucherAmt(p, tr, hasKids, totalDays);
     const isPast=year<CUR_YEAR;
     if(totalDays>=p.vT&&vAmt>0){
       const dead='31.12.'+(year+1);
@@ -1443,6 +1499,31 @@ function setPeriodType(y,idx,type){
 }
 function togglePaid(k){PAID[k]=!PAID[k];render();}
 function toggleChk(k){CHECKED[k]=!CHECKED[k];render();}
+
+function openSim(){
+  const wrap = document.getElementById('sim-wrap');
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  if(wrap.style.display === 'block'){
+    document.getElementById('sim-sal').value = PROF.salary || 12000;
+    calcSim();
+    wrap.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+function calcSim(){
+  const sal = parseFloat(document.getElementById('sim-sal').value) || 0;
+  const mil = parseFloat(document.getElementById('sim-mil').value) || 0;
+  const work = parseFloat(document.getElementById('sim-work').value) || 0;
+  
+  const dailyBl = Math.min(MAX_DAY, Math.max(MIN_DAY, sal/30));
+  const blGross = paidDays(mil) * dailyBl * (PROF.employ === 'slf' ? 1.25 : 1);
+  const empGross = (sal / 22) * work; // Assuming ~22 work days a month
+  
+  const total = blGross + empGross;
+  document.getElementById('sim-bl').textContent = fmt(blGross);
+  document.getElementById('sim-emp').textContent = fmt(empGross);
+  document.getElementById('sim-total').textContent = fmt(total);
+}
 
 function render(){
   if(!POLICY) return;
