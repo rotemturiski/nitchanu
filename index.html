@@ -337,6 +337,7 @@ body {
     <div class="seg">
       <button class="sb on" id="et-emp" onclick="setF('employ','emp')">שכיר</button>
       <button class="sb" id="et-slf" onclick="setF('employ','slf')">עצמאי</button>
+      <button class="sb" id="et-unemp" onclick="setF('employ','unemp')">לא עובד</button>
     </div>
   </div>
   <div class="sec-row" id="sal-row">
@@ -490,7 +491,7 @@ body {
   <div class="sec-title" style="padding-bottom:12px;border-bottom:1px dashed #e2e8e4;margin-bottom:12px"><span class="sec-icon">💸</span>סימולטור שכר החודש</div>
   
   <div style="display:flex;flex-direction:column;gap:12px;padding:0 20px">
-    <div style="display:flex;justify-content:space-between;align-items:center">
+    <div id="sim-sal-row" style="display:flex;justify-content:space-between;align-items:center">
       <label style="font-size:13px;font-weight:600;color:#64816e">שכר ברוטו רגיל</label>
       <div style="display:flex;align-items:center;gap:4px">
         <span style="font-size:13px;color:#789982">₪</span>
@@ -501,7 +502,7 @@ body {
       <label style="font-size:13px;font-weight:600;color:#64816e;line-height:1.2">ימי מילואים החודש<br><small style="font-weight:400;font-size:11px">כולל סופ"ש שעשית</small></label>
       <input type="number" id="sim-mil" value="0" min="0" max="31" step="0.5" style="width:65px;padding:6px;text-align:center;border-radius:8px;border:1px solid #e2e8e4;font-size:14px;font-weight:700" oninput="calcSim()"/>
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center">
+    <div id="sim-work-row" style="display:flex;justify-content:space-between;align-items:center">
       <label style="font-size:13px;font-weight:600;color:#64816e;line-height:1.2">ימי עבודה בפועל החודש<br><small style="font-weight:400;font-size:11px">ימים שהגעת למשרד</small></label>
       <input type="number" id="sim-work" value="0" min="0" max="31" step="0.5" style="width:65px;padding:6px;text-align:center;border-radius:8px;border:1px solid #e2e8e4;font-size:14px;font-weight:700" oninput="calcSim()"/>
     </div>
@@ -1372,7 +1373,18 @@ document.addEventListener('DOMContentLoaded',function(){
 function setF(field,val){
   if(field==='employ'){
     PROF.employ=val;
-    ['emp','slf'].forEach(x=>document.getElementById('et-'+x).className='sb'+(x===val?' on':''));
+    ['emp','slf','unemp'].forEach(x=>{
+      const el = document.getElementById('et-'+x);
+      if(el) el.className='sb'+(x===val?' on':'');
+    });
+    const salRow = document.getElementById('sal-row');
+    if (val === 'unemp') {
+      salRow.style.display = 'none';
+      PROF.salary = 0;
+    } else {
+      salRow.style.display = 'flex';
+      PROF.salary = Math.max(0, +document.getElementById('sal-in').value || 0);
+    }
   } else if(field==='tier'){
     PROF.tier=val;
     ['aplus','a','b','c'].forEach(x=>document.getElementById('tr-'+x).className='sb'+(x===val?' on':''));
@@ -1502,13 +1514,18 @@ function toggleChk(k){CHECKED[k]=!CHECKED[k];render();}
 
 function calcSim(){
   const simSalInput = document.getElementById('sim-sal');
+  const isUnemp = PROF.employ === 'unemp';
+  
+  document.getElementById('sim-sal-row').style.display = isUnemp ? 'none' : 'flex';
+  document.getElementById('sim-work-row').style.display = isUnemp ? 'none' : 'flex';
+  
   let sal = parseFloat(simSalInput.value);
-  if (isNaN(sal)) { 
-      sal = PROF.salary || 12000;
-      simSalInput.placeholder = sal;
+  if (isNaN(sal) || isUnemp) { 
+      sal = isUnemp ? 0 : (PROF.salary || 12000);
+      if (!isUnemp) simSalInput.placeholder = sal;
   }
   const mil = parseFloat(document.getElementById('sim-mil').value) || 0;
-  const work = parseFloat(document.getElementById('sim-work').value) || 0;
+  const work = isUnemp ? 0 : (parseFloat(document.getElementById('sim-work').value) || 0);
   
   const dailyBl = Math.min(MAX_DAY, Math.max(MIN_DAY, sal/30));
   const blGross = paidDays(mil) * dailyBl * (PROF.employ === 'slf' ? 1.25 : 1);
