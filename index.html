@@ -354,7 +354,9 @@ body {
       <button class="sb" id="tr-aplus" onclick="setF('tier','aplus')">א׳+</button>
       <button class="sb on" id="tr-a" onclick="setF('tier','a')">א׳</button>
       <button class="sb" id="tr-b" onclick="setF('tier','b')">ב׳</button>
-      <button class="sb" id="tr-c" onclick="setF('tier','c')">ג׳–ה׳</button>
+      <button class="sb" id="tr-c" onclick="setF('tier','c')">ג׳</button>
+      <button class="sb" id="tr-d" onclick="setF('tier','d')">ד׳</button>
+      <button class="sb" id="tr-e" onclick="setF('tier','e')">ה׳</button>
     </div>
   </div>
 </div>
@@ -549,10 +551,10 @@ let PAID={}, CHECKED={};
 
 let POLICY = null;
 const POLICY_FALLBACK={
-  2026:{fD1:{aplus:45,a:40,b:30,c:0},fD31:{aplus:120,a:100,b:80,c:0},fD46:{aplus:70,a:60,b:45,c:0},fMax:{aplus:5000,a:4250,b:3250,c:0},fT:10,expT:40,expD:{aplus:46,a:39,b:31,c:31},specT:61,specD:{aplus:133,a:113,b:95,c:95},kitT:45,kit:{aplus:1250,a:1065,b:815,c:0},vT:45,vBase:{aplus:2500,a:2125,b:1600,c:780},vDay:{aplus:57,a:48,b:37,c:18},vMax:{aplus:3350,a:2850,b:2150,c:1050},vBaseKids:{aplus:3000,a:2550,b:1950,c:1020},vDayKids:{aplus:67,a:57,b:43,c:22},vMaxKids:{aplus:4000,a:3400,b:2600,c:1350},famT:40,famD:{aplus:83,a:71,b:60,c:60},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
-  2025:{fD1:{aplus:30,a:30,b:20,c:0},fD31:{aplus:80,a:80,b:50,c:0},fMax:{aplus:5000,a:5000,b:3000,c:0},fT:10,expT:40,expS:30,expD:{aplus:46.6,a:46.6,b:31,c:26.6},specT:61,specD:{aplus:133,a:133,b:60,c:40},kitT:45,kit:{aplus:2500,a:2500,b:1250,c:1250},vT:60,vAmt:{aplus:3000,a:3000,b:2000,c:1000},vAmtKids:{aplus:4500,a:4500,b:3500,c:2500},famT:40,famS:30,famD:{aplus:83.3,a:83.3,b:60,c:50},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
-  2024:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
-  2023:{fD1:{aplus:0,a:0,b:0,c:0},fD31:{aplus:0,a:0,b:0,c:0},fMax:{aplus:0,a:0,b:0,c:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50},specT:32,specD:{aplus:133,a:133,b:133,c:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800]}},
+  2026:{fD1:{aplus:45,a:40,b:30,c:0,d:0,e:0},fD31:{aplus:120,a:100,b:80,c:0,d:0,e:0},fD46:{aplus:70,a:60,b:45,c:0,d:0,e:0},fMax:{aplus:5000,a:4250,b:3250,c:0,d:0,e:0},fT:10,expT:40,expD:{aplus:46,a:39,b:31,c:31,d:31,e:31},specT:61,specD:{aplus:133,a:113,b:86,c:60,d:40,e:30},kitT:45,kit:{aplus:1250,a:1065,b:815,c:0,d:0,e:0},vT:45,vBase:{aplus:2500,a:2125,b:1600,c:780,d:780,e:780},vDay:{aplus:57,a:48,b:37,c:18,d:18,e:18},vMax:{aplus:3350,a:2850,b:2150,c:1050,d:1050,e:1050},vBaseKids:{aplus:3000,a:2550,b:1950,c:1020,d:1020,e:1020},vDayKids:{aplus:67,a:57,b:43,c:22,d:22,e:22},vMaxKids:{aplus:4000,a:3400,b:2600,c:1350,d:1350,e:1350},famT:40,famD:{aplus:83,a:71,b:60,c:60,d:60,e:60},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800],d:[150,450,900,1350,1800],e:[150,450,900,1350,1800]}},
+  2025:{fD1:{aplus:30,a:30,b:20,c:0,d:0,e:0},fD31:{aplus:80,a:80,b:50,c:0,d:0,e:0},fMax:{aplus:5000,a:5000,b:3000,c:0,d:0,e:0},fT:10,expT:40,expS:30,expD:{aplus:46.6,a:46.6,b:31,c:26.6,d:26.6,e:26.6},specT:61,specD:{aplus:133,a:133,b:60,c:40,d:40,e:30},kitT:45,kit:{aplus:2500,a:2500,b:1250,c:1250,d:1250,e:1250},vT:60,vAmt:{aplus:3000,a:3000,b:2000,c:1000,d:1000,e:1000},vAmtKids:{aplus:4500,a:4500,b:3500,c:2500,d:2500,e:2500},famT:40,famS:30,famD:{aplus:83.3,a:83.3,b:60,c:50,d:50,e:50},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800],d:[150,450,900,1350,1800],e:[150,450,900,1350,1800]}},
+  2024:{fD1:{aplus:0,a:0,b:0,c:0,d:0,e:0},fD31:{aplus:0,a:0,b:0,c:0,d:0,e:0},fMax:{aplus:0,a:0,b:0,c:0,d:0,e:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50,d:50,e:50},specT:32,specD:{aplus:133,a:133,b:133,c:133,d:133,e:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250,d:1250,e:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500,d:1500,e:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000,d:3000,e:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21,d:21,e:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800],d:[150,450,900,1350,1800],e:[150,450,900,1350,1800]}},
+  2023:{fD1:{aplus:0,a:0,b:0,c:0,d:0,e:0},fD31:{aplus:0,a:0,b:0,c:0,d:0,e:0},fMax:{aplus:0,a:0,b:0,c:0,d:0,e:0},fT:999,expT:40,expD:{aplus:133,a:100,b:75,c:50,d:50,e:50},specT:32,specD:{aplus:133,a:133,b:133,c:133,d:133,e:133},kitT:20,kit:{aplus:1250,a:1250,b:1250,c:1250,d:1250,e:1250},vT:60,vAmt:{aplus:1500,a:1500,b:1500,c:1500,d:1500,e:1500},vAmtKids:{aplus:3000,a:3000,b:3000,c:3000,d:3000,e:3000},famT:40,famD:{aplus:83,a:70,b:52,c:21,d:21,e:21},idT:[5,10,15,20,37],idA:{aplus:[466,1452,2904,4356,5808],a:[466,1452,2904,4356,5808],b:[300,900,1800,2700,3600],c:[150,450,900,1350,1800],d:[150,450,900,1350,1800],e:[150,450,900,1350,1800]}},
 };
 
 function getVoucherAmt(p, tr, hasKids, totalDays) {
@@ -676,7 +678,7 @@ function calcYear(yr,totalDays,tr,p){
       when:isPast?'בדוק אם הוגש':'הגשה דרך מופת',auto:false,amt:2000,dead:null});
   }
   // move
-  if(FAM.move&&yr>=FAM.move_since&&totalDays>=45&&yr===CUR_YEAR&&['aplus','a','b'].includes(tr)){
+  if(FAM.move&&yr>=FAM.move_since&&totalDays>=45&&yr===CUR_YEAR&&['aplus','a','b','c','d','e'].includes(tr)){
     items.push({key:'move_'+yr,name:'השתתפות מעבר דירה',
       when:'הגשה דרך מופת + קבלות',auto:false,amt:2500,dead:null});
   }
@@ -726,16 +728,19 @@ function getManualItems(){
         when:isPast?'בדוק אם מומש — עדיין תקף?':'SMS מהצבא · מרכז מילואים 360',
         amt:vAmt,dead,year,expired:isExpired(dead),missed:isPast&&!CHECKED['voucher_'+year]});
     }
-    if(totalDays>=50&&['aplus','a','b'].includes(tr)){
+    if(totalDays>=50&&['aplus','a','b','c','d','e'].includes(tr)){
       const totalKids=(FAM.kids14>0?FAM.kids14:0)+(FAM.kids16>0?FAM.kids16:0);
       const kidsGroup=totalKids>=4?'4+':totalKids>=1?'1-3':'0';
       const psychTable={
         'aplus':{'4+':6000,'1-3':5280,'0':3600},
         'a':{'4+':5040,'1-3':4320,'0':3120},
-        'b':{'4+':4080,'1-3':3360,'0':2400}
+        'b':{'4+':4080,'1-3':3360,'0':2400},
+        'c':{'4+':3120,'1-3':2400,'0':1680},
+        'd':{'4+':2400,'1-3':1920,'0':1200},
+        'e':{'4+':1920,'1-3':1440,'0':960}
       };
       const psychAmt=psychTable[tr][kidsGroup];
-      const psychSessions={'aplus':{'4+':25,'1-3':22,'0':15},'a':{'4+':21,'1-3':18,'0':13},'b':{'4+':17,'1-3':14,'0':10}};
+      const psychSessions={'aplus':{'4+':25,'1-3':22,'0':15},'a':{'4+':21,'1-3':18,'0':13},'b':{'4+':17,'1-3':14,'0':10},'c':{'4+':13,'1-3':10,'0':7},'d':{'4+':10,'1-3':8,'0':5},'e':{'4+':8,'1-3':6,'0':4}};
       const sessions=psychSessions[tr][kidsGroup];
       const dead='31.12.'+(year+1);
       all.push({key:'psych_'+year,name:'החזר טיפולים רגשיים',
@@ -759,7 +764,7 @@ function getManualItems(){
     }
     if(FAM.student&&year>=FAM.student_since&&totalDays>=50){
       const dead='30.9.'+year;
-      const tuitionByTier={aplus:11653,a:9905,b:7574,c:3496};
+      const tuitionByTier={aplus:11653,a:9905,b:7574,c:3496,d:3496,e:3496};
       all.push({key:'tuition_'+year,name:'סיוע שכ"ל',
         when:isPast?'קרן הסיוע — בדוק אם ניצלת':'קרן הסיוע · אישור סטודנט + קבלות',
         amt:tuitionByTier[tr]||3000,dead,year,expired:isExpired(dead),missed:isPast&&!CHECKED['tuition_'+year]});
@@ -767,7 +772,7 @@ function getManualItems(){
     if(FAM.special&&year>=FAM.special_since&&totalDays>=45)
       all.push({key:'special_'+year,name:'מענק ילד עם צרכים מיוחדים',
         when:'קרן הסיוע',amt:2000,dead:null,year});
-    if(FAM.move&&year>=FAM.move_since&&totalDays>=45&&year===CUR_YEAR&&['aplus','a','b'].includes(tr))
+    if(FAM.move&&year>=FAM.move_since&&totalDays>=45&&year===CUR_YEAR&&['aplus','a','b','c','d','e'].includes(tr))
       all.push({key:'move_'+year,name:'השתתפות מעבר דירה',
         when:'קרן הסיוע + קבלות',amt:2500,dead:null,year});
     if(FAM.cmd&&year>=FAM.cmd_since&&year===CUR_YEAR){
@@ -1386,7 +1391,7 @@ function setF(field,val){
     }
   } else if(field==='tier'){
     PROF.tier=val;
-    ['aplus','a','b','c'].forEach(x=>document.getElementById('tr-'+x).className='sb'+(x===val?' on':''));
+    ['aplus','a','b','c','d','e'].forEach(x=>document.getElementById('tr-'+x).className='sb'+(x===val?' on':''));
   }
   render();
 }
@@ -1782,7 +1787,7 @@ function syncUI() {
   ['emp','slf'].forEach(x => document.getElementById('et-'+x).className = 'sb'+(x===PROF.employ?' on':''));
   document.getElementById('sal-in').value = PROF.salary;
   // tier
-  ['aplus','a','b','c'].forEach(x => document.getElementById('tr-'+x).className = 'sb'+(x===PROF.tier?' on':''));
+  ['aplus','a','b','c','d','e'].forEach(x => document.getElementById('tr-'+x).className = 'sb'+(x===PROF.tier?' on':''));
   // FAM steppers
   ['kids14','kids16'].forEach(k => {
     const el = document.getElementById('f-'+k);
