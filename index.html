@@ -591,6 +591,8 @@ function baseNet(days){
   const gross=paidDays(days)*r*(PROF.employ==='slf'?1.25:1);
   return Math.round(gross);
 }
+// מדרגים ד׳ ו-ה׳ משתמשים בערכי מדרג ג׳ ב-policy.json
+function polTier(t){return (t==='d'||t==='e')?'c':t;}
 
 const HEB_MONTHS=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
 function getMonthlyBreakdown(yr0){
@@ -618,6 +620,7 @@ function getMonthlyBreakdown(yr0){
 }
 
 function calcYear(yr,totalDays,tr,p){
+  tr=polTier(tr);
   const items=[];
   const isPast=yr<CUR_YEAR;
   const now=new Date();
@@ -722,7 +725,7 @@ function getManualItems(){
     const {year}=yr0;
     const totalDays=getTotalDays(yr0);
     const p=POLICY[year]||POLICY[CUR_YEAR];
-    const tr=PROF.tier;
+    const tr=polTier(PROF.tier);
     const hasKids=(FAM.kids14>0&&year>=FAM.kids14_since)||(FAM.kids16>0&&year>=FAM.kids16_since);
     const vAmt=getVoucherAmt(p, tr, hasKids, totalDays);
     const isPast=year<CUR_YEAR;
